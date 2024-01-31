@@ -50,28 +50,45 @@ public:
     }
 };
 
-class IOException : public FileException {
-public:
-    const char* what() const noexcept override {
-        return "IO Exception";
+double divide(double a, double b) {
+    if (b == 0.0) {
+        throw DivideByZeroException();
     }
-};
+    return a / b;
+}
+
+void allocateMemory(int size) {
+    if (size <= 0) {
+        throw OutOfMemoryException();
+    }
+}
+
+void openFile(const std::string& filename) {
+    if (filename == "nonexistent.txt") {
+        throw FileNotFoundException();
+    }
+}
 
 int main() {
     try {
-        throw DivideByZeroException();
+        double result = divide(15.0, 0.0);
     }
-    catch (const MathException& mathException) {
-        std::cout << "Caught Math Exception: " << mathException.what() << std::endl;
+    catch (const MathException& e) {
+        std::cout << "Error: " << e.what() << std::endl;
     }
-    catch (const OutOfMemoryException& memoryException) {
-        std::cout << "Caught Memory Exception: " << memoryException.what() << std::endl;
+
+    try {
+        allocateMemory(-1);
     }
-    catch (const BaseException& baseException) {
-        std::cout << "Caught Base Exception: " << baseException.what() << std::endl;
+    catch (const MemoryException& e) {
+        std::cout << "Error: " << e.what() << std::endl;
     }
-    catch (const std::exception& e) {
-        std::cout << "Exception: " << e.what() << std::endl;
+
+    try {
+        openFile("nonexistent.txt");
+    }
+    catch (const FileException& e) {
+        std::cout << "Error: " << e.what() << std::endl;
     }
 
     return 0;
